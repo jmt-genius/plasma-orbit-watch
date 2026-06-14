@@ -12,17 +12,23 @@ export function RiskPanel() {
   return (
     <div className={cn("rounded-lg border border-white/5 p-3 transition-all", isHigh && "animate-pulse-danger")}>
       <div className="flex items-center justify-between">
-        <div className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground">Collision Risk</div>
+        <div className="text-[9px] uppercase tracking-[0.14em] font-display text-muted-foreground">Collision Risk</div>
         <div className={cn("data-value text-sm font-display", colorClass)}>{level.toUpperCase()}</div>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-display">Closest Approach</div>
-          <div className="data-value text-lg">{r ? r.closestApproachKm.toFixed(2) : "—"}<span className="ml-1 text-[10px] text-muted-foreground font-mono">km</span></div>
+          <div className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground font-display">Closest Appr.</div>
+          <div className="mt-0.5 flex items-baseline gap-1">
+            <span className="data-value text-base">{r ? r.closestApproachKm.toFixed(1) : "—"}</span>
+            <span className="text-[9px] text-muted-foreground font-mono shrink-0">km</span>
+          </div>
         </div>
         <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-display">Probability</div>
-          <div className="data-value text-lg">{r ? (r.probability * 100).toFixed(1) : "—"}<span className="ml-1 text-[10px] text-muted-foreground font-mono">%</span></div>
+          <div className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground font-display">Probability</div>
+          <div className="mt-0.5 flex items-baseline gap-1">
+            <span className="data-value text-base">{r ? (r.probability * 100).toFixed(1) : "—"}</span>
+            <span className="text-[9px] text-muted-foreground font-mono shrink-0">%</span>
+          </div>
         </div>
       </div>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/5">

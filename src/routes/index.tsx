@@ -29,14 +29,14 @@ function Panel({ title, accent = "cyan", children, className = "" }: { title: st
     : accent === "emerald" ? "bg-[color:var(--emerald-glow)] shadow-[0_0_8px_var(--emerald-glow)]"
     : "bg-[color:var(--cyan-glow)] shadow-[0_0_8px_var(--cyan-glow)]";
   return (
-    <section className={`glass-panel flex flex-col ${className}`}>
-      <header className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
+    <section className={`glass-panel flex flex-col overflow-hidden ${className}`}>
+      <header className="flex items-center justify-between border-b border-white/5 px-4 py-2.5 shrink-0">
         <div className="flex items-center gap-2">
-          <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-          <h2 className="section-title">{title}</h2>
+          <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dot}`} />
+          <h2 className="section-title whitespace-nowrap">{title}</h2>
         </div>
       </header>
-      <div className="flex-1 p-4">{children}</div>
+      <div className="flex-1 p-4 min-h-0">{children}</div>
     </section>
   );
 }
@@ -70,7 +70,7 @@ function Dashboard() {
         {/* Header */}
         <header className="glass-panel flex flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <div className="relative shrink-0">
               <div className="h-8 w-8 rounded-sm border border-[var(--cyan-glow)]/40 bg-[var(--cyan-glow)]/10" />
               <span className="absolute inset-0 m-auto block h-1.5 w-1.5 rounded-full bg-[color:var(--cyan-glow)]" />
             </div>
@@ -79,9 +79,9 @@ function Dashboard() {
               <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground font-display">Disturbance-Based Debris Detection · CubeSat Mission Control</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5">
-              <span className={`h-1.5 w-1.5 rounded-full ${running ? "bg-[color:var(--emerald-glow)] shadow-[0_0_8px_var(--emerald-glow)] animate-pulse" : "bg-muted-foreground"}`} />
+              <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${running ? "bg-[color:var(--emerald-glow)] shadow-[0_0_8px_var(--emerald-glow)] animate-pulse" : "bg-muted-foreground"}`} />
               <span className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground">{running ? "Telemetry Online" : "Offline"}</span>
             </div>
             <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5">
@@ -114,13 +114,13 @@ function Dashboard() {
 
           {/* Center column */}
           <div className="flex flex-col gap-3 lg:col-span-6">
-            <Panel title="Live Spectrogram · RF Forward-Scatter" accent="cyan" className="h-[240px]">
+            <Panel title="Live Spectrogram · RF Forward-Scatter" accent="cyan" className="spectrogram-panel">
               <Spectrogram />
             </Panel>
-            <Panel title="Signal Stream · Amplitude / Doppler" accent="purple" className="h-[180px]">
+            <Panel title="Signal Stream · Amplitude / Doppler" accent="purple" className="signal-panel">
               <SignalChart />
             </Panel>
-            <Panel title="Orbital Tracking · LEO Trajectory" accent="purple" className="h-[420px]">
+            <Panel title="Orbital Tracking · LEO Trajectory" accent="purple" className="flex-1 min-h-[380px]">
               <OrbitGlobe />
             </Panel>
           </div>
