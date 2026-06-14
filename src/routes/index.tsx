@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ParticleBackground } from "@/components/plasma/ParticleBackground";
 import { Spectrogram } from "@/components/plasma/Spectrogram";
 import { SignalChart } from "@/components/plasma/SignalChart";
 import { Pipeline } from "@/components/plasma/Pipeline";
@@ -67,18 +66,17 @@ function Dashboard() {
 
   return (
     <>
-      <ParticleBackground />
       <div className="relative mx-auto flex min-h-screen max-w-[1600px] flex-col gap-3 p-4 md:p-6">
         {/* Header */}
         <header className="glass-panel flex flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="h-9 w-9 rounded-md border border-[var(--cyan-glow)]/50 bg-gradient-to-br from-[var(--cyan-glow)]/30 to-[var(--purple-glow)]/30 shadow-[0_0_18px_-4px_var(--cyan-glow)]" />
-              <span className="absolute inset-0 m-auto block h-2 w-2 rounded-full bg-[color:var(--cyan-glow)] animate-blip" />
+              <div className="h-8 w-8 rounded-sm border border-[var(--cyan-glow)]/40 bg-[var(--cyan-glow)]/10" />
+              <span className="absolute inset-0 m-auto block h-1.5 w-1.5 rounded-full bg-[color:var(--cyan-glow)]" />
             </div>
             <div>
-              <h1 className="text-lg leading-tight font-display tracking-[0.2em] neon-text-cyan">PLASMA<span className="neon-text-purple">PING</span></h1>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-display">Disturbance-Based Debris Detection · CubeSat Mission Control</p>
+              <h1 className="text-base leading-tight font-display tracking-[0.12em] text-foreground">PLASMAPING</h1>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground font-display">Disturbance-Based Debris Detection · CubeSat Mission Control</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
