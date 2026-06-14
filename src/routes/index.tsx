@@ -1,29 +1,151 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { ParticleBackground } from "@/components/plasma/ParticleBackground";
+import { Spectrogram } from "@/components/plasma/Spectrogram";
+import { SignalChart } from "@/components/plasma/SignalChart";
+import { Pipeline } from "@/components/plasma/Pipeline";
+import { FeaturePanel } from "@/components/plasma/FeaturePanel";
+import { ClassificationPanel } from "@/components/plasma/ClassificationPanel";
+import { RiskPanel } from "@/components/plasma/RiskPanel";
+import { EventLog } from "@/components/plasma/EventLog";
+import { Controls } from "@/components/plasma/Controls";
+import { OrbitGlobe } from "@/components/plasma/OrbitGlobe";
+import { usePlasmaStore } from "@/lib/plasma/store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "PlasmaPing · Mission Control" },
+      { name: "description", content: "Live simulated debris detection: signal processing, classification, orbital tracking, collision risk." },
+      { property: "og:title", content: "PlasmaPing · Mission Control" },
+      { property: "og:description", content: "Live simulated debris detection dashboard." },
     ],
   }),
-  component: Index,
+  component: Dashboard,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Panel({ title, accent = "cyan", children, className = "" }: { title: string; accent?: "cyan" | "purple" | "emerald"; children: React.ReactNode; className?: string }) {
+  const dot =
+    accent === "purple" ? "bg-[color:var(--purple-glow)] shadow-[0_0_8px_var(--purple-glow)]"
+    : accent === "emerald" ? "bg-[color:var(--emerald-glow)] shadow-[0_0_8px_var(--emerald-glow)]"
+    : "bg-[color:var(--cyan-glow)] shadow-[0_0_8px_var(--cyan-glow)]";
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <section className={`glass-panel flex flex-col ${className}`}>
+      <header className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
+        <div className="flex items-center gap-2">
+          <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+          <h2 className="section-title">{title}</h2>
+        </div>
+      </header>
+      <div className="flex-1 p-4">{children}</div>
+    </section>
+  );
+}
+
+function Clock() {
+  const [now, setNow] = useState<string>("");
+  useEffect(() => {
+    const update = () => setNow(new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC");
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return <span className="data-value text-xs text-muted-foreground">{now}</span>;
+}
+
+function Dashboard() {
+  const start = usePlasmaStore((s) => s.start);
+  const stop = usePlasmaStore((s) => s.stop);
+  const running = usePlasmaStore((s) => s.running);
+  const events = usePlasmaStore((s) => s.events);
+  const anomaly = usePlasmaStore((s) => s.anomaly);
+
+  useEffect(() => {
+    start();
+    return () => stop();
+  }, [start, stop]);
+
+  return (
+    <>
+      <ParticleBackground />
+      <div className="relative mx-auto flex min-h-screen max-w-[1600px] flex-col gap-3 p-4 md:p-6">
+        {/* Header */}
+        <header className="glass-panel flex flex-col gap-3 px-5 py-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="h-9 w-9 rounded-md border border-[var(--cyan-glow)]/50 bg-gradient-to-br from-[var(--cyan-glow)]/30 to-[var(--purple-glow)]/30 shadow-[0_0_18px_-4px_var(--cyan-glow)]" />
+              <span className="absolute inset-0 m-auto block h-2 w-2 rounded-full bg-[color:var(--cyan-glow)] animate-blip" />
+            </div>
+            <div>
+              <h1 className="text-lg leading-tight font-display tracking-[0.2em] neon-text-cyan">PLASMA<span className="neon-text-purple">PING</span></h1>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-display">Disturbance-Based Debris Detection · CubeSat Mission Control</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5">
+              <span className={`h-1.5 w-1.5 rounded-full ${running ? "bg-[color:var(--emerald-glow)] shadow-[0_0_8px_var(--emerald-glow)] animate-pulse" : "bg-muted-foreground"}`} />
+              <span className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground">{running ? "Telemetry Online" : "Offline"}</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5">
+              <span className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground">Mission Time</span>
+              <Clock />
+            </div>
+            <div className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5">
+              <span className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground">Detections</span>
+              <span className="data-value neon-text-cyan">{events.length.toString().padStart(3, "0")}</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Pipeline */}
+        <div className="glass-panel px-5 py-3">
+          <Pipeline />
+        </div>
+
+        {/* Main grid */}
+        <div className="grid flex-1 grid-cols-1 gap-3 lg:grid-cols-12">
+          {/* Left column */}
+          <div className="flex flex-col gap-3 lg:col-span-3">
+            <Panel title="Sensor Control" accent="cyan">
+              <Controls />
+            </Panel>
+            <Panel title="Feature Extraction" accent="emerald" className="flex-1">
+              <FeaturePanel />
+            </Panel>
+          </div>
+
+          {/* Center column */}
+          <div className="flex flex-col gap-3 lg:col-span-6">
+            <Panel title="Live Spectrogram · RF Forward-Scatter" accent="cyan" className="h-[240px]">
+              <Spectrogram />
+            </Panel>
+            <Panel title="Signal Stream · Amplitude / Doppler" accent="purple" className="h-[180px]">
+              <SignalChart />
+            </Panel>
+            <Panel title="Orbital Tracking · LEO Trajectory" accent="purple" className="h-[420px]">
+              <OrbitGlobe />
+            </Panel>
+          </div>
+
+          {/* Right column */}
+          <div className="flex flex-col gap-3 lg:col-span-3">
+            <Panel title="Classification" accent="cyan">
+              <ClassificationPanel />
+            </Panel>
+            <Panel title="Collision Risk" accent={anomaly?.active ? "purple" : "emerald"}>
+              <RiskPanel />
+            </Panel>
+            <Panel title="Detection Log" accent="emerald" className="flex-1">
+              <EventLog />
+            </Panel>
+          </div>
+        </div>
+
+        <footer className="flex items-center justify-between px-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-display">
+          <span>PlasmaPing v0.9 · Simulation Mode</span>
+          <span>Orbit Altitude ~400km · Inc 51.6° · RF Forward-Scatter Analog</span>
+        </footer>
+      </div>
+    </>
   );
 }
